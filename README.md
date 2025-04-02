@@ -39,4 +39,4 @@ cd benchmark/
 ./bench_tree <../../test/*
 > Note: `Аналогично предыдущему с *````
 
-![image](images/benc_screen.png)
+![image](images/bench_screen.png)
