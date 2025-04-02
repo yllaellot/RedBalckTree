@@ -15,6 +15,7 @@ macro(add_gbench TESTNAME)
 
     target_include_directories(${TESTNAME} PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/../MyRedBlackTree/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${CMAKE_CURRENT_SOURCE_DIR}/../set/include)
 
 
