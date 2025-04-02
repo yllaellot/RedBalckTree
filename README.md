@@ -1,4 +1,4 @@
-# 2Q and Perfect cache 
+# RedBalckTree 
 # Установка и сборка
 Клонируйте репозиторий, перейдите в папку с ним.
 Сборка проекта:
@@ -32,11 +32,10 @@ cd MyRedBlackTree/
 ./rbt_main ../../tests/data/tasks/test_01.dat
 ```
 ## Benchmark
+![image](images/bench_screen.png)
 Чтобы запустить Benchmark:
 > Note: `<Результат сборки лежит в build/benchmark.>*`
 ```sh
 cd benchmark/
 ./bench_tree <../../test/*
 > Note: `Аналогично предыдущему с *````
-
-![image](images/bench_screen.png)
