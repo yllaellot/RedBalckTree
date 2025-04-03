@@ -29,7 +29,7 @@ int main()
                 case QUERY:
                     if (!(std::cin >> key1 >> key2)) throw "Error reading from input stream\n";
 
-                    std::cout << rb_tree.range_queries(key1, key2) << "\n";
+                    std::cout << rb_tree.range_queries(key1, key2) << " ";
                     break;
 
                 default :

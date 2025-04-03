@@ -38,7 +38,7 @@ private:
              Node* parent_ = nullptr,
              Node* left_ = nullptr,
              Node* right_ = nullptr, 
-             Color color_ = 0,
+             Color color_ = Color::BLACK,
              int64_t cnt_ = 0);
 
         Node(Node* node_);
@@ -66,7 +66,7 @@ private:
     
     public:
 
-        ConstRedBlackIterator(Node* ptr = 0, Node* TNULL = 0, Node* root = 0);
+        ConstRedBlackIterator(Node* ptr = nullptr, Node* TNULL = nullptr, Node* root = nullptr);
 
         ConstRedBlackIterator(const std::initializer_list<T> init_list);
     
@@ -85,9 +85,9 @@ private:
         int64_t order();
     };
 
-    Node* TNULL;
-    Node* root;
-    int64_t elements;
+    Node* TNULL_;
+    Node* root_;
+    int64_t elements_;
 
     void left_rotate(Node* node_);
 
@@ -108,6 +108,10 @@ private:
     void set_color(Node* node_, Color color_);
 
     bool equel_color(Node* node_, Color color_);
+
+    void set(Node* TNULL, Node* root, int64_t elements);
+
+    int64_t range_queries_search(const T& key1, const T& key2);
 
 public:
 
@@ -137,21 +141,17 @@ public:
 
     int64_t size() const;
 
-    void set(Node* TNULL, Node* root, int64_t elements);
-
     ConstIterator find(const T& key) const;
 
     ConstIterator upper_bound(const T& key) const;
 
-    ConstIterator find_by_order(int64_t i) const;
+    ConstIterator find_by_order(int64_t index) const;
 
     int64_t order_of_key(const T& x) const;
 
     int64_t order_of_key(const ConstIterator key) const;
 
     int64_t range_queries(const T& key1, const T& key2);
-
-    int64_t range_queries_search(const T& key1, const T& key2);
 
     bool operator==(const RedBlackTree<T, CMP>& rhs) const;
 

@@ -12,7 +12,7 @@ inline RedBlackTree<T, CMP>::ConstRedBlackIterator::ConstRedBlackIterator(Node* 
 template<class T, class CMP>
 inline bool RedBlackTree<T, CMP>::ConstRedBlackIterator::operator==(const ConstRedBlackIterator rhs) const
 {
-    return ptr_ == rhs.ptr;
+    return ptr_ == rhs.ptr_;
 }
 
 template<class T, class CMP>
@@ -49,7 +49,7 @@ inline class RedBlackTree<T, CMP>::ConstRedBlackIterator& RedBlackTree<T, CMP>::
     Node* prev_ptr = ptr_;
     if (ptr_ == nullptr)
     {
-        ptr_ = root;
+        ptr_ = root_;
         find_max();
         return *this;
     }
@@ -66,7 +66,7 @@ inline const class RedBlackTree<T, CMP>::ConstRedBlackIterator RedBlackTree<T, C
     ConstRedBlackIterator res(*this);
     if (ptr_ == nullptr)
     {
-        ptr_ = root;
+        ptr_ = root_;
         find_max();
         return res;
     }
@@ -86,7 +86,7 @@ inline void RedBlackTree<T, CMP>::ConstRedBlackIterator::find_min()
 template<class T, class CMP>
 inline void RedBlackTree<T, CMP>::ConstRedBlackIterator::find_max()
 {
-    while (ptr_->right != TNULL) ptr_ = ptr_->right;
+    while (ptr_->right != TNULL_) ptr_ = ptr_->right;
 }
 
 template<class T, class CMP>
@@ -132,15 +132,15 @@ inline void RedBlackTree<T, CMP>::ConstRedBlackIterator::find_prev()
 template<class T, class CMP>
 inline class RedBlackTree<T, CMP>::ConstRedBlackIterator RedBlackTree<T, CMP>::end() const
 {
-    return ConstIterator{nullptr, TNULL, root};
+    return ConstIterator{nullptr, TNULL_, root_};
 }
 
 template<class T, class CMP>
 inline class RedBlackTree<T, CMP>::ConstRedBlackIterator RedBlackTree<T, CMP>::begin() const
 {
-    if (root == TNULL) return end();
+    if (root_ == TNULL_) return end();
 
-    ConstIterator it{root, TNULL, root};
+    ConstIterator it{root_, TNULL_, root_};
     it.find_min();
 
     return it;
@@ -149,12 +149,12 @@ inline class RedBlackTree<T, CMP>::ConstRedBlackIterator RedBlackTree<T, CMP>::b
 template<class T, class CMP>
 inline class RedBlackTree<T, CMP>::ConstRedBlackIterator RedBlackTree<T, CMP>::upper_bound(const T& key) const
 {
-    Node* curr = root;
+    Node* curr = root_;
     Node* result = nullptr;
 
     bool less_than_min = true;
 
-    while (curr != TNULL)
+    while (curr != TNULL_)
     {
         if (!CMP{}(key, curr->data) && key != curr->data) 
         {
@@ -175,7 +175,7 @@ inline class RedBlackTree<T, CMP>::ConstRedBlackIterator RedBlackTree<T, CMP>::u
 
     if(result == nullptr || less_than_min) return end();
 
-    return ConstIterator {result, TNULL, root};
+    return ConstIterator {result, TNULL_, root_};
 }
 
 template<class T, class CMP>
@@ -183,9 +183,9 @@ inline class RedBlackTree<T, CMP>::ConstRedBlackIterator RedBlackTree<T, CMP>::f
 {
     if (index >= size()) return end();
 
-    Node* curr = root;
+    Node* curr = root_;
     
-    while (curr != TNULL && curr->cnt != index)
+    while (curr != TNULL_ && curr->cnt != index)
     {
         if (curr->cnt < index)
         {
@@ -198,7 +198,7 @@ inline class RedBlackTree<T, CMP>::ConstRedBlackIterator RedBlackTree<T, CMP>::f
         }
     }
 
-    return ConstIterator{curr, TNULL, root};
+    return ConstIterator{curr, TNULL_, root_};
 }
 
 template<class T, class CMP>
@@ -209,8 +209,8 @@ inline int64_t RedBlackTree<T, CMP>::ConstRedBlackIterator::order()
 
     if (!curr)
     {
-        curr = root;
-        while (curr != TNULL)
+        curr = root_;
+        while (curr != TNULL_)
         {
             index += curr->cnt + 1;
             curr = curr->right;
@@ -219,7 +219,7 @@ inline int64_t RedBlackTree<T, CMP>::ConstRedBlackIterator::order()
     else
     {
         index = curr->cnt;
-        while (curr != root)
+        while (curr != root_)
         {
             if (curr->parent->right == curr) index += curr->parent->cnt + 1;
             curr = curr->parent;

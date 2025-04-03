@@ -2,8 +2,6 @@
 
 #include "RedBlackTree.h"
 #include <cstdint>
-#include <iostream>
-#include <iterator>
 #include <utility>
 
 #define Black RedBlackTree<T>::Color::BLACK
@@ -17,11 +15,11 @@ inline void RedBlackTree<T, CMP>::left_rotate(Node* node)
     Node* buff{node->right};
     node->right = buff->left;
 
-    if (buff->left != TNULL) buff->left->parent = node;
+    if (buff->left != TNULL_) buff->left->parent = node;
 
     buff->parent = node->parent;
 
-    if (node->parent == nullptr) root = buff;
+    if (node->parent == nullptr) root_ = buff;
     else if (node == node->parent->left) node->parent->left = buff;
     else node->parent->right = buff;
 
@@ -36,11 +34,11 @@ inline void RedBlackTree<T, CMP>::right_rotate(Node* node)
     Node* buff{node->left};
     node->left = buff->right;
 
-    if (buff->right != TNULL) buff->right->parent = node;
+    if (buff->right != TNULL_) buff->right->parent = node;
 
     buff->parent = node->parent;
 
-    if (node->parent == nullptr) root = buff;
+    if (node->parent == nullptr) root_ = buff;
     else if (node == node->parent->right) node->parent->right = buff;
     else node->parent->left = buff;
 
@@ -73,7 +71,7 @@ void RedBlackTree<T, CMP>::balance_delete(Node* node)
 {
     Node* brother;
 
-    while (node != root && node->color == Black)
+    while (node != root_ && node->color == Black)
     {
         if (node == node->parent->left)
         {
@@ -111,7 +109,7 @@ void RedBlackTree<T, CMP>::balance_delete(Node* node)
 
                 left_rotate(node->parent);
 
-                node = root;
+                node = root_;
             }
         }
         else
@@ -152,7 +150,7 @@ void RedBlackTree<T, CMP>::balance_delete(Node* node)
 
                 right_rotate(node->parent);
 
-                node = root;
+                node = root_;
             }
         }
     }
@@ -163,7 +161,7 @@ void RedBlackTree<T, CMP>::balance_delete(Node* node)
 template<class T, class CMP>
 inline void RedBlackTree<T, CMP>::swap(Node* src, Node* dst)
 {
-    if (src->parent == nullptr) root = dst;
+    if (src->parent == nullptr) root_ = dst;
     else if (src == src->parent->left) src->parent->left = dst;
     else src->parent->right = dst;
 
@@ -231,24 +229,24 @@ void RedBlackTree<T, CMP>::balance_insert(Node* node)
             }
         }
 
-        if (node == root) break;
+        if (node == root_) break;
     }
 
-    set_color(root, Black);
+    set_color(root_, Black);
 }
 
 template<class T, class CMP>
 void RedBlackTree<T, CMP>::free_node(Node* ptr)
 {
     std::vector<Node*> stack_node;
-    stack_node.push_back(root);
+    stack_node.push_back(root_);
 
     while (stack_node.size())
     {
         ptr = stack_node.back();
         stack_node.pop_back();
 
-        if (ptr == TNULL) continue;
+        if (ptr == TNULL_) continue;
 
         stack_node.push_back(ptr->left);
         stack_node.push_back(ptr->right);
@@ -302,12 +300,12 @@ inline void RedBlackTree<T, CMP>::erase_helper(Node* node)
 
     Color y_original_color = buff_2->color;
 
-    if (node->left == TNULL)
+    if (node->left == TNULL_)
     {
         buff_1 = node->right;
         swap(node, node->right);
     }
-    else if (node->right == TNULL)
+    else if (node->right == TNULL_)
     {
         buff_1 = node->left;
         swap(node, node->left);
@@ -316,7 +314,7 @@ inline void RedBlackTree<T, CMP>::erase_helper(Node* node)
     {
         buff_2 = node->right;
 
-        while (buff_2->left != TNULL)
+        while (buff_2->left != TNULL_)
         {
             buff_2->cnt--;
             buff_2 = buff_2->left;
@@ -351,14 +349,14 @@ inline void RedBlackTree<T, CMP>::erase_helper(Node* node)
 template<class T, class CMP>
 inline int64_t RedBlackTree<T, CMP>::range_queries_search(const T& key1, const T& key2)
 {
-    Node* node = root;
+    Node* node = root_;
     Node* result = nullptr;
     int64_t last_r = 0;
     int64_t num_elems = 0;
     bool is_min = true;
 
     //subtract number of elements in [min_elem, key1) 
-    while (node != TNULL)
+    while (node != TNULL_)
     {
         if (!CMP{}(node->data, key1)) // key1 <= node->key()
         {
@@ -383,13 +381,13 @@ inline int64_t RedBlackTree<T, CMP>::range_queries_search(const T& key1, const T
         num_elems -= result->cnt;
     }
 
-    node = root;
+    node = root_;
     result = nullptr;
     last_r = 0;
     is_min = true;
 
     //add number of elements in [min_elem, key2]
-    while (node != TNULL)
+    while (node != TNULL_)
     {
         if (CMP{}(key2, node->data)) // key2 < node->key()
         {
@@ -450,9 +448,9 @@ inline RedBlackTree<T, CMP>::RedBlackTree::Node::Node(Node* node_) :
 
 template<class T, class CMP>
 inline RedBlackTree<T, CMP>::RedBlackTree() :
-    TNULL(new Node{T(0), nullptr, nullptr, nullptr, Black, -1 }),
-    root(TNULL),
-    elements(0)
+    TNULL_(new Node{T(0), nullptr, nullptr, nullptr, Black, -1 }),
+    root_(TNULL_),
+    elements_(0)
 {}
 
 template<class T, class CMP>
@@ -464,18 +462,26 @@ inline RedBlackTree<T, CMP>::RedBlackTree(const std::initializer_list<T> list) :
 template<class T, class CMP>
 inline RedBlackTree<T, CMP>::RedBlackTree(const RedBlackTree<T, CMP>& rhs) : RedBlackTree()
 {
-    elements = rhs.elements;
-    if (rhs.root != rhs.TNULL)
+    elements_ = rhs.elements_;
+    if (rhs.root_ != rhs.TNULL_)
     {
-        root = new Node;
-        copy_tree(root, rhs.root, rhs.TNULL, nullptr);
+        root_ = new Node;
+        copy_tree(root_, rhs.root_, rhs.TNULL_, nullptr);
     }
+}
+
+template<class T, class CMP>
+inline void  RedBlackTree<T, CMP>::set(Node* TNULL, Node* root, int64_t elements)
+{
+    TNULL_ = TNULL;
+    root_= root;
+    elements_ = elements;
 }
 
 template<class T, class CMP>
 inline RedBlackTree<T, CMP>::RedBlackTree(RedBlackTree<T, CMP>&& rhs) noexcept
 {
-    set(rhs.TNULL, rhs.root, rhs.elements);
+    set(rhs.TNULL_, rhs.root_, rhs.elements_);
     rhs.set(nullptr, nullptr, 0);
 }
 
@@ -483,16 +489,16 @@ template<class T, class CMP>
 inline RedBlackTree<T, CMP>& RedBlackTree<T, CMP>::operator=(const RedBlackTree<T, CMP>& rhs)
 {
     if (this == &rhs) return *this;
-    if (root != TNULL) free_node(root);
+    if (root_ != TNULL_) free_node(root_);
 
-    elements = rhs.elements;
+    elements_ = rhs.elements_;
 
-    if (rhs.root != rhs.TNULL)
+    if (rhs.root_ != rhs.TNULL_)
     {
-        root = new Node;
-        copy_tree(root, rhs.root, rhs.TNULL, nullptr);
+        root_ = new Node;
+        copy_tree(root_, rhs.root_, rhs.TNULL_, nullptr);
     }
-    else root = TNULL;
+    else root_ = TNULL_;
 
     return *this;
 }
@@ -502,11 +508,11 @@ inline RedBlackTree<T, CMP>& RedBlackTree<T, CMP>::operator=(RedBlackTree<T, CMP
 {
     if (this == &rhs) return *this;
 
-    if (root != TNULL) free_node(root);
+    if (root_ != TNULL_) free_node(root_);
 
-    delete TNULL;
+    delete TNULL_;
 
-    set(rhs.TNULL, rhs.root, rhs.elements);
+    set(rhs.TNULL_, rhs.root_, rhs.elements_);
     rhs.set(nullptr, nullptr, 0);
 
     return *this;
@@ -515,16 +521,16 @@ inline RedBlackTree<T, CMP>& RedBlackTree<T, CMP>::operator=(RedBlackTree<T, CMP
 template<class T, class CMP>
 inline void RedBlackTree<T, CMP>::insert(const T& key)
 { 
-    elements++;
+    elements_++;
 
-    Node* node = new Node{key, nullptr, TNULL, TNULL, Red, 0};
+    Node* node = new Node{key, nullptr, TNULL_, TNULL_, Red, 0};
 
     set_color(node, Red);
 
     Node* parent = nullptr;
-    Node* curr = root;
+    Node* curr = root_;
 
-    while (curr != TNULL)
+    while (curr != TNULL_)
     {
         parent = curr;
 
@@ -536,7 +542,7 @@ inline void RedBlackTree<T, CMP>::insert(const T& key)
         else if (node->data == curr->data)
         {
             delete node;
-            elements--;
+            elements_--;
 
             while (curr->parent != nullptr)
             {
@@ -552,7 +558,7 @@ inline void RedBlackTree<T, CMP>::insert(const T& key)
     node->parent = parent;
     node->cnt = node->left->cnt + 1;
 
-    if (parent == nullptr) root = node;
+    if (parent == nullptr) root_ = node;
     else if (CMP{}(node->data, parent->data)) parent->left = node;
     else parent->right = node;
 
@@ -570,15 +576,15 @@ inline void RedBlackTree<T, CMP>::insert(const T& key)
 template<class T, class CMP>
 inline void RedBlackTree<T, CMP>::erase(const T& key)
 {
-    if (elements == 0) return;
+    if (elements_ == 0) return;
 
-    elements--;
+    elements_--;
 
-    Node* node = root;
-    Node* helper = TNULL;
+    Node* node = root_;
+    Node* helper = TNULL_;
     Node* buff = nullptr;
 
-    while (node != TNULL)
+    while (node != TNULL_)
     {
         buff = node;
 
@@ -595,9 +601,9 @@ inline void RedBlackTree<T, CMP>::erase(const T& key)
         }
     }
 
-    if (helper == TNULL)
+    if (helper == TNULL_)
     {
-        elements++;
+        elements_++;
 
         if (CMP{}(key, buff->data)) buff->cnt++;
 
@@ -617,9 +623,9 @@ inline void RedBlackTree<T, CMP>::erase(const T& key)
 template<class T, class CMP>
 inline void RedBlackTree<T, CMP>::erase(ConstIterator it)
 {
-    if (it.ptr == nullptr || it.ptr == TNULL) return;
+    if (it.ptr == nullptr || it.ptr == TNULL_) return;
 
-    elements--;
+    elements_--;
 
     Node* curr = it.ptr;
 
@@ -637,16 +643,16 @@ inline void RedBlackTree<T, CMP>::erase(ConstIterator it)
 template<class T, class CMP>
 inline int64_t RedBlackTree<T, CMP>::size() const
 {
-    return elements;
+    return elements_;
 }
 
 template<class T, class CMP>
 inline class RedBlackTree<T, CMP>::ConstRedBlackIterator RedBlackTree<T, CMP>::find(const T& key) const
 {
-    Node* node = root;
-    Node* res_n = TNULL;
+    Node* node = root_;
+    Node* res_n = TNULL_;
 
-    while (node != TNULL)
+    while (node != TNULL_)
     {
         if (node->data == key) res_n = node;
 
@@ -654,18 +660,18 @@ inline class RedBlackTree<T, CMP>::ConstRedBlackIterator RedBlackTree<T, CMP>::f
         else node = node->left;
     }
 
-    if (res_n == TNULL) return end();
+    if (res_n == TNULL_) return end();
 
-    return ConstIterator{res_n, TNULL, root};
+    return ConstIterator{res_n, TNULL_, root_};
 }
 
 template<class T, class CMP>
 inline int64_t RedBlackTree<T, CMP>::order_of_key(const T& key) const
 {
-    Node* curr = root;
+    Node* curr = root_;
     int64_t key_order = 0;
 
-    while (curr != TNULL && curr->data != key) 
+    while (curr != TNULL_ && curr->data != key) 
     {
         if (CMP{}(key, curr->data)) curr  = curr->left;
         else 
@@ -675,7 +681,7 @@ inline int64_t RedBlackTree<T, CMP>::order_of_key(const T& key) const
         }
     }
 
-    if (curr  == TNULL) return elements;
+    if (curr  == TNULL_) return elements_;
 
     key_order += curr->cnt;
 
@@ -691,7 +697,7 @@ inline int64_t RedBlackTree<T, CMP>::order_of_key(const ConstIterator it) const
 template<class T, class CMP>
 inline bool RedBlackTree<T, CMP>::operator==(const RedBlackTree<T, CMP>& rhs) const
 {
-    if (elements != rhs.elements) return false;
+    if (elements_ != rhs.elements_) return false;
 
     auto it1 = begin(), it2 = rhs.begin();
 
@@ -708,7 +714,7 @@ inline bool RedBlackTree<T, CMP>::operator==(const RedBlackTree<T, CMP>& rhs) co
 template<class T, class CMP>
 inline bool RedBlackTree<T, CMP>::operator!=(const RedBlackTree<T, CMP>& rhs) const
 {
-    if (elements != rhs.elements) return true;
+    if (elements_ != rhs.elements_) return true;
 
     auto it1 = begin(), it2 = rhs.begin();
 
@@ -726,6 +732,6 @@ inline bool RedBlackTree<T, CMP>::operator!=(const RedBlackTree<T, CMP>& rhs) co
 template<class T, class CMP>
 inline RedBlackTree<T, CMP>::~RedBlackTree()
 {
-    free_node(root);
-    delete TNULL;
+    free_node(root_);
+    delete TNULL_;
 }

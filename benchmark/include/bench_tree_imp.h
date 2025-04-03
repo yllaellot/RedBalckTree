@@ -70,7 +70,7 @@ namespace bencht
                     case QUERY:
                         if (!(set_file >> key1 >> key2)) throw "Error reading from input stream\n";
 
-                        ans = rb_tree.range_queries(key1, key2);
+                        benchmark::DoNotOptimize(rb_tree.range_queries(key1, key2));
                         break;
 
                     default :
@@ -102,14 +102,14 @@ namespace bencht
                     case setf::KEY : 
                         if (!(set_file >> key)) throw "Error reading from input stream\n";
 
-                        rb_tree.insert(key);
+                        benchmark::DoNotOptimize(rb_tree.insert(key));
                                     
                         break;
 
                     case setf::QUERY :
                         if (!(set_file >> key1 >> key2)) throw "Error reading from input stream\n";
 
-                        ans = setf::range_queries(rb_tree, key1, key2);
+                        benchmark::DoNotOptimize(setf::range_queries(rb_tree, key1, key2));
 
                         break;
 
@@ -144,7 +144,7 @@ namespace bencht
                 {
                     for(int j = -range; j < range + 4; j++)
                     {
-                        volatile auto res = rbt.range_queries(i, j);
+                        benchmark::DoNotOptimize(rbt.range_queries(i, j));
                     }
                 }
             }
@@ -173,7 +173,7 @@ namespace bencht
                 {
                     for(int j = -range; j < range + 4; j++)
                     {
-                        volatile auto res = setf::range_queries(set, i, j);
+                        benchmark::DoNotOptimize(setf::range_queries(set, i, j));
                     }
                 }
             }
@@ -183,27 +183,25 @@ namespace bencht
 
     inline void run_bench_set (benchmark::State& state, std::string bench_name)
     {
-        std::set<int64_t> set;
         std::ifstream set_file (bench_path(bench_name));
-
-        volatile int res;
 
         while (state.KeepRunning())
         {
-            res = run_set(set_file);
+            benchmark::DoNotOptimize(run_set(set_file));
+            set_file.clear();
+            set_file.seekg(0, std::ios::beg);
         }
     }
 
     inline void run_bench_rbt (benchmark::State& state, std::string bench_name)
     {
-        std::set<int64_t> set;
         std::ifstream set_file (bench_path(bench_name));
-
-        volatile int res;
 
         while (state.KeepRunning())
         {
-            res = run_rbt(set_file);
+            benchmark::DoNotOptimize(run_rbt(set_file));
+            set_file.clear();
+            set_file.seekg(0, std::ios::beg);
         }
     }
 }
