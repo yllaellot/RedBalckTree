@@ -1,4 +1,4 @@
-#include "../include/set_func.h"
+#include "set_func.h"
 
 int main() 
 {
